@@ -1,5 +1,6 @@
-// vite-sitemap-plugin.ts
 import type { Plugin } from "vite";
+import { promises as fsPromises } from "fs";
+import { resolve } from "path";
 
 export interface SitemapOptions {
   hostname: string;
@@ -49,7 +50,7 @@ const extractRoutesFromManifest = (content: string): string[] => {
 export const sitemapPlugin = (options: SitemapOptions): Plugin => {
   const {
     hostname,
-    routeTreePath = "routeTree.gen.ts",
+    routeTreePath = "app/routeTree.gen.ts",
     routes = {},
     defaultChangefreq = "weekly",
     defaultPriority = 0.5,
@@ -60,10 +61,6 @@ export const sitemapPlugin = (options: SitemapOptions): Plugin => {
     apply: "build",
     closeBundle: async () => {
       try {
-        // Dynamically import Node built-in modules to avoid bundling issues
-        const { promises: fsPromises } = await import("fs");
-        const { resolve } = await import("path");
-
         const possiblePaths = [
           routeTreePath,
           `src/${routeTreePath}`,
@@ -135,5 +132,3 @@ ${allRoutes
     },
   };
 };
-
-export default sitemapPlugin;
