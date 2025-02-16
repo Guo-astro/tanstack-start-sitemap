@@ -32,8 +32,15 @@ export default defineConfig({
       formats: ["es", "cjs", "umd"],
     },
     rollupOptions: {
-      external: Object.keys(peerDependencies),
-      output: { globals: { react: "React", "react-dom": "ReactDOM" } },
+      external: [
+        ...Object.keys(peerDependencies),
+        "fs",
+        "path",
+        // add any other Node built-ins if needed
+      ],
+      output: {
+        globals: { react: "React", "react-dom": "ReactDOM" },
+      },
     },
   },
 });
