@@ -1,7 +1,5 @@
 // vite-sitemap-plugin.ts
 import type { Plugin } from "vite";
-import { promises as fsPromises } from "fs";
-import { resolve } from "path";
 
 export interface SitemapOptions {
   hostname: string;
@@ -31,7 +29,7 @@ export interface SitemapOptions {
   defaultPriority?: number;
 }
 
-function extractRoutesFromManifest(content: string): string[] {
+const extractRoutesFromManifest = (content: string): string[] => {
   const manifestMatch = content.match(
     /ROUTE_MANIFEST_START([\s\S]*?)ROUTE_MANIFEST_END/
   );
@@ -46,7 +44,7 @@ function extractRoutesFromManifest(content: string): string[] {
     console.error("Error parsing route manifest:", e);
     return [];
   }
-}
+};
 
 export const sitemapPlugin = (options: SitemapOptions): Plugin => {
   const {
@@ -62,6 +60,10 @@ export const sitemapPlugin = (options: SitemapOptions): Plugin => {
     apply: "build",
     closeBundle: async () => {
       try {
+        // Dynamically import Node built-in modules to avoid bundling issues
+        const { promises: fsPromises } = await import("fs");
+        const { resolve } = await import("path");
+
         const possiblePaths = [
           routeTreePath,
           `src/${routeTreePath}`,
@@ -72,14 +74,14 @@ export const sitemapPlugin = (options: SitemapOptions): Plugin => {
         let routeTreeContent: string | null = null;
         let foundPath: string | null = null;
 
-        // Try reading the route tree from one of the possible paths
+        // Attempt to read the route tree file from the possible paths
         for (const testPath of possiblePaths) {
           try {
             routeTreeContent = await fsPromises.readFile(testPath, "utf-8");
             foundPath = testPath;
             break;
           } catch {
-            // Continue to the next path if reading fails
+            // Try the next path if this one fails
           }
         }
 
@@ -133,3 +135,5 @@ ${allRoutes
     },
   };
 };
+
+export default sitemapPlugin;
