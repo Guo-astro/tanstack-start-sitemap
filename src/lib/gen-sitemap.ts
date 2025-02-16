@@ -49,7 +49,7 @@ const extractRoutesFromManifest = (content: string): string[] => {
 export const sitemapPlugin = (options: SitemapOptions): Plugin => {
   const {
     hostname,
-    routeTreePath = "app/routeTree.gen.ts",
+    routeTreePath = "routeTree.gen.ts",
     routes = {},
     defaultChangefreq = "weekly",
     defaultPriority = 0.5,

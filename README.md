@@ -31,7 +31,8 @@ export default defineConfig({
         projects: ["./tsconfig.json"],
       }),
        sitemapPlugin({
-        hostname: 'https://example.com'
+        hostname: 'https://example.com',
+        
     }),
     ],
   },
